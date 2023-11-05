@@ -1,0 +1,55 @@
+#Notes dynomo db table
+notesTable:
+     Type: AWS::DynamoDB::Table
+     Properties:
+       TableName: notes-${self:provider.stage}
+       BillingMode: PAY_PER_REQUEST
+       AttributeDefinitions:
+         - AttributeName: notesId
+           AttributeType: S
+       KeySchema:
+          - AttributeName: notesId
+            KeyType: HASH
+# Cognito User Pool
+cognitoUserPool:
+      Type: AWS::Cognito::UserPool   
+      Properties: 
+        UserPoolName: DollyParton-${self:provider.stage}
+
+# Cognito User Pool Client
+cognitoUserPoolWebClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        UserPoolId: !Ref cognitoUserPool
+        ClientName: web
+        SupportedIdentityProviders:
+          - COGNITO
+        AllowedOAuthFlowsUserPoolClient: true
+        AllowedOAuthScopes: 
+          - phone
+          - email
+          - openid
+          - profile
+          - aws.cognito.signin.user.admin
+        AllowedOAuthFlows: 
+          - implicit
+        CallbackURLs:
+          - http://localhost:4000
+
+# Cognito User Pool Domain
+cognitoUserPoolDomain:
+      Type: AWS::Cognito::UserPoolDomain
+      Properties:
+        Domain: wohdolly-${self:provider.stage}
+        UserPoolId: !Ref cognitoUserPool
+
+# Application Parameters
+userPoolArnParam:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /notes/${self:provider.stage}/userPoolArn
+        Type: String
+        Value: !GetAtt cognitoUserPool.Arn
+
+
+
