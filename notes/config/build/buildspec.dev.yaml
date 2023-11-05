@@ -22,7 +22,7 @@ phases:
     # steps
 artifacts:
   files:
-    - my-artifact/*
+    - my-artifact/**
   name: MyProjectArtifacts
 cache:
   paths:
