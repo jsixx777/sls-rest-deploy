@@ -22,7 +22,7 @@ phases:
     # steps
 artifacts:
   files:
-    - notes-crud/notes/my-artifact/**
+    - notes/my-artifact/**
   name: MyProjectArtifacts
 cache:
   paths:
