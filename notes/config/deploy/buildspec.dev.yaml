@@ -16,7 +16,7 @@ phases:
     on-failure: ABORT
     commands:
       - echo deploying resources......
-      - serverless deploy --stage dev     
+      - serverless deploy --stage dev --verbose    
     # steps
 artifacts:
   files:
