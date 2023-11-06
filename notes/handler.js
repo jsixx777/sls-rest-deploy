@@ -117,7 +117,6 @@ module.exports.deleteNote = async (event, context, callback) => {
 };
 
 module.exports.getAllNotes = async (event, context, callback) => {
-  console.log(JSON.stringify(event));
   context.callbackWaitsForEmptyEventLoop = false;
   try {
     const params = {
