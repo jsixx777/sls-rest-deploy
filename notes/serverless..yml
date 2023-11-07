@@ -89,6 +89,6 @@ plugins:
   - serverless-iam-roles-per-function
 resources:
  Resources:
-  ${file(resources.yaml)}
+  ${file(resources.yml)}
    #push
    #push again
