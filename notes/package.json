@@ -10,9 +10,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "serverless-iam-roles-per-function": "^3.2.0"
+    "serverless-iam-roles-per-function": "^3.2.0",
+    "serverless-plugin-typescript": "^2.1.5",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@types/aws-lambda": "^8.10.125",
     "aws-jwt-verifier": "^1.1.0",
     "aws-jwt-verify": "^4.0.0",
     "aws-sdk": "^2.1454.0"

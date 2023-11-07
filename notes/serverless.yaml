@@ -85,8 +85,10 @@ functions:
             type: COGNITO_USER_POOLS
             arn: !GetAtt cognitoUserPool.Arn 
 plugins:
+  - serverless-plugin-typescript
   - serverless-iam-roles-per-function
 resources:
  Resources:
   ${file(resources.yaml)}
-   
+   #push
+   #push again

@@ -2,6 +2,7 @@
 const { CognitoJwtVerifier } = require("aws-jwt-verify");
 const COGNITO_USERPOOL_ID = process.env.COGNITO_USERPOOL_ID;
 const COGNITO_WEB_CLIENT_ID = process.env.COGNITO_WEB_CLIENT_ID;
+import { APIGatewayEvent, APIGatewayTokenAuthorizerEvent, Context, APIGatewayProxyCallback, PolicyDocument, AuthResponse } from 'aws-lambda';
 
 const jwtVerifier = CognitoJwtVerifier.create({
     userPoolId: COGNITO_USERPOOL_ID,
@@ -10,8 +11,8 @@ const jwtVerifier = CognitoJwtVerifier.create({
 });
 
 
-const generatePolicy = (principalId, effect, resource) => {
-    var authResponse = {};
+const generatePolicy = (principalId, effect, resource): AuthResponse => {
+    var authResponse = {} as AuthResponse;
 
     authResponse.principalId = principalId;
     if (effect && resource) {
@@ -34,7 +35,7 @@ const generatePolicy = (principalId, effect, resource) => {
 }
 
 
-exports.handler = async (event, context, callback) => {
+export const handler = async (event: APIGatewayTokenAuthorizerEvent, context: Context, callback: any) => {
     //lambda authorizer code
     var token = event.authorizationToken; //allow or deny based on token
 

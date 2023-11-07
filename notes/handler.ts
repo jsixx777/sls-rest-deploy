@@ -1,20 +1,30 @@
 'use strict';
 
-const AWS = require('aws-sdk'); 
-const DynamoDB = require("aws-sdk/clients/dynamodb");
-const documentClient = new AWS.DynamoDB.DocumentClient({region: "us-east-2", maxRetries: 3, httpOptions: {timeout: 5000}
+//import { AWS } from 'aws-sdk';
+import { DynamoDB } from 'aws-sdk';
+import { APIGatewayEvent, Context, APIGatewayProxyCallback } from 'aws-lambda';
+// const AWS = require('aws-sdk'); 
+// const DynamoDB = require("aws-sdk/clients/dynamodb");
+const documentClient = new DynamoDB.DocumentClient({region: "us-east-2", maxRetries: 3, httpOptions: {timeout: 5000}
 
 });
 const NOTES_TABLE_NAME = process.env.NOTES_TABLE_NAME;
 
-module.exports.createNote = async (event, context, callback) => {
+const send = (statusCode, data) => {
+  return {
+    statusCode: statusCode,
+    body: JSON.stringify(data)
+  }
+}
+
+export const createNote = async (event: APIGatewayEvent, context: Context, callback: APIGatewayProxyCallback) => {
   context.callbackWaitsForEmptyEventLoop = false;
   console.log("Received event:", JSON.stringify(event, null, 2));
 
   // let data = JSON.parse(event.body);
   let data;
   try {
-    data = JSON.parse(event.body);
+    data = JSON.parse(event.body as string);
     console.log("Parsed data:", data);
   } catch (parseError) {
     console.error("Error parsing event body:", parseError);
@@ -24,7 +34,7 @@ module.exports.createNote = async (event, context, callback) => {
     };
   }
   const params = {
-    TableName: NOTES_TABLE_NAME,
+    TableName: NOTES_TABLE_NAME as string,
     Item: {
       notesId: data.id,
       title: data.title,
@@ -58,13 +68,13 @@ module.exports.createNote = async (event, context, callback) => {
   }
 };
 
-module.exports.updateNote = async (event, context, callback) => {
+export const updateNote = async (event: APIGatewayEvent, context: Context, callback: APIGatewayProxyCallback) => {
   context.callbackWaitsForEmptyEventLoop = false;
-  let notesId = event.pathParameters.id;
-  let data = JSON.parse(event.body);
+  let notesId = event.pathParameters?.id;
+  let data = JSON.parse(event.body as string);
   try {
     const params = {
-      TableName: NOTES_TABLE_NAME,
+      TableName: NOTES_TABLE_NAME as string,
       Key: {notesId},
       UpdateExpression: "set #title = :title, #body = :body",
       ExpressionAttributeNames: {
@@ -90,12 +100,12 @@ module.exports.updateNote = async (event, context, callback) => {
   }
 };
 
-module.exports.deleteNote = async (event, context, callback) => {
+export const deleteNote = async (event: APIGatewayEvent, context: Context, callback: APIGatewayProxyCallback) => {
   context.callbackWaitsForEmptyEventLoop = false;
-  let notesId = event.pathParameters.id;
+  let notesId = event.pathParameters?.id;
   try {
     const params = {
-      TableName: NOTES_TABLE_NAME,
+      TableName: NOTES_TABLE_NAME as string,
       Key: {notesId},
       ConditionExpression: "attribute_exists(notesId)"
     }
@@ -116,11 +126,11 @@ module.exports.deleteNote = async (event, context, callback) => {
   };
 };
 
-module.exports.getAllNotes = async (event, context, callback) => {
+export const getAllNotes = async (event: APIGatewayEvent, context: Context, callback: APIGatewayProxyCallback) => {
   context.callbackWaitsForEmptyEventLoop = false;
   try {
     const params = {
-      TableName: NOTES_TABLE_NAME
+      TableName: NOTES_TABLE_NAME as string
     }
     const notes = await documentClient.scan(params).promise();
     callback(null, {
